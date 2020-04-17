@@ -36,6 +36,38 @@ describe("Simulator Action Creators", function() {
     });
   });
 
+  describe("setFilterInfo", function() {
+    it("Should Create Right Action", function () {
+      let input = {
+        selectedTable: '',
+        selectedColumn: '',
+        selectedFK: '',
+      };
+
+      let correctAction = {
+        type: 'SET_FILTER_INFO',
+        payload: input
+      };
+
+      let action = simulatorActions.setFilterInfo(input);
+      action.should.deepEqual(correctAction);
+    });
+  });
+
+  describe("setActiveJoinFilter", function() {
+    it("Should Create Right Action", function () {
+      let input = "tableId";
+
+      let correctAction = {
+        type: 'SET_ACTIVE_JOIN_FILTER',
+        payload: input
+      };
+
+      let action = simulatorActions.setActiveJoinFilter(input);
+      action.should.deepEqual(correctAction);
+    });
+  });
+
   describe("setWdcUrl", function() {
     it("Should Create Right Action", function () {
       let input = "../Examples/html/earthquakeUSGS.html";
@@ -140,6 +172,25 @@ describe("Simulator Action Creators", function() {
     });
   });
 
+  describe("setStandardConnections", function() {
+    it("Should Create Right Action", function () {
+      let input = {
+        key: {
+          standardConnections: {},
+          data: []
+        }
+      };
+
+      let correctAction = {
+        type: 'SET_STANDARD_CONNECTIONS',
+        payload: input
+      };
+
+      let action = simulatorActions.setStandardConnections(input);
+      action.should.deepEqual(correctAction);
+    });
+  });
+
   describe("setTables", function() {
     it("Should Create Right Action", function () {
       let input = {
@@ -233,5 +284,15 @@ describe("Simulator Action Creators", function() {
       action.should.deepEqual(correctAction);
     });
   });
-});
 
+  describe("resetStandardConnections", function() {
+    it("Should Create Right Action", function () {
+      let correctAction = {
+        type: 'RESET_STANDARD_CONNECTIONS',
+      };
+
+      let action = simulatorActions.resetStandardConnections();
+      action.should.deepEqual(correctAction);
+    });
+  })
+});

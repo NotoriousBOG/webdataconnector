@@ -12,7 +12,7 @@ describe("Reducer", function() {
         connectionData: 'connectionData',
         username: 'username',
         password: 'password',
-        platformOS: "platformOs",
+        platformOs: "platformOs",
         platformVersion: "platformVersion",
         platformEdition: "platformEdition",
         platformBuildNumber: "platformBuildNumber",
@@ -27,6 +27,37 @@ describe("Reducer", function() {
 
       const output = reducer(state, action);
       output.wdcAttrs.should.deepEqual(newAttrs);
+    });
+  });
+
+  describe("SET_FILTER_INFO", function() {
+    it("Should Set filterInfo", function () {
+      const newFilters = {
+        selectedTable: 'selectedTable',
+        selectedColumn: 'selectedColumn',
+        selectedFK: 'selectedFK',
+      };
+
+      const action = {
+        type: "SET_FILTER_INFO",
+        payload: newFilters
+      };
+
+      const output = reducer(state, action);
+      output.filterInfo.should.deepEqual(newFilters);
+    });
+  });
+
+  describe("SET_ACTIVE_JOIN_FILTER", function() {
+    it("Should Set activeJoinFilter", function () {
+      const newFilter = 'tableId';
+      const action = {
+        type: "SET_ACTIVE_JOIN_FILTER",
+        payload: newFilter
+      };
+
+      const output = reducer(state, action);
+      output.activeJoinFilter.should.deepEqual(newFilter);
     });
   });
 
@@ -166,6 +197,25 @@ describe("Reducer", function() {
     });
   });
 
+  describe("SET_STANDARD_CONNECTIONS", function() {
+    it("Should Set Standard Connections", function() {
+      const newValue = {
+        "id": {
+          standardConnections: [{ alias: "alias", tables: [], joins: [] }],
+          data: [],
+        }
+      };
+
+      const action = {
+        type: "SET_STANDARD_CONNECTIONS",
+        payload: newValue
+      };
+
+      const output = reducer(state, action);
+      output.standardConnections.should.deepEqual(newValue);
+    })
+  })
+
   describe("ADD_TABLES", function() {
     it("Should Add Tables", function () {
       const tables = {
@@ -234,7 +284,7 @@ describe("Reducer", function() {
           connectionData: 'data',
           username: 'name',
           password: 'pw',
-          platformOS: "os",
+          platformOs: "os",
           platformVersion: "vers",
           platformEdition: "ed",
           platformBuildNumber: "bn",

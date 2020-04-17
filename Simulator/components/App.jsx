@@ -6,7 +6,9 @@ import { Provider, connect } from 'react-redux';
 import { Grid,
          Col,
          PageHeader,
-         Label } from 'react-bootstrap';
+         Label,
+         Tabs,
+         Tab } from 'react-bootstrap';
 
 // Actions
 import * as simulatorActions from '../actions/simulator_actions';
@@ -22,6 +24,7 @@ import StartConnectorGroup from './StartConnectorGroup';
 import SimulatorAttributes from './SimulatorAttributes';
 import DataTables from './DataTables';
 import GatherDataFrame from './GatherDataFrame';
+import StandardConnections from './StandardConnections';
 
 // Utilities
 import * as consts from '../utils/consts';
@@ -80,9 +83,17 @@ class App extends Component {
     // Bind Reset Action
     this.resetSimulator = () =>
       dispatch(simulatorActions.resetState());
+
+    // Bind Join Filter Actions
+    this.setFilterInfo = (filterInfo) =>
+      dispatch(simulatorActions.setFilterInfo(filterInfo));
+    this.setActiveJoinFilter = (activeFilter) =>
+      dispatch(simulatorActions.setActiveJoinFilter(activeFilter));
   }
 
   render() {
+    let standardConnectionsTabList = null;
+
     // compute variables needed for render
     const interactiveOrAuthPhaseInProgress = this.props.phaseInProgress &&
       (this.props.currentPhase === consts.phases.INTERACTIVE ||
@@ -92,6 +103,16 @@ class App extends Component {
 
     const hasData = !!this.props.tables && Object.keys(this.props.tables).length > 0;
     const isAddressBarEmpty = (this.props.addressBarUrll === '');
+
+    const hasStandardConnections = this.props.standardConnections.length > 0;
+    if (hasStandardConnections) {
+      const connectionList = this.props.standardConnections;
+      standardConnectionsTabList = connectionList.map((standardConnection, idx) =>
+        <Tab eventKey={idx} title={standardConnection.alias} key={`connection-tab-${idx}`}>
+          <StandardConnections data={standardConnection} key={`connection-window-${idx}`} />
+        </Tab>
+      );
+    }
 
     return (
       <div className="simulator-app">
@@ -128,7 +149,23 @@ class App extends Component {
               setWdcAttrs={this.setWdcAttrs}
             />
           </Col>
-          <Col md={12} className="table-header" >
+          {this.props.showAdvanced ?
+            <Col md={12} id="standard-connections-results">
+              <Col className="standard-header">
+                <PageHeader> Standard Connections </PageHeader>
+              </Col>
+              {hasStandardConnections ?
+                <Tabs md={12} defaultActiveKey={0} id="connection-window" animation={false}>
+                  {standardConnectionsTabList}
+                </Tabs>
+                :
+                <Col className="no-results-label">
+                  <Label> No Standard Connections Gathered </Label>
+                </Col>
+                }
+            </Col>
+          : null}
+          <Col md={12} className="table-header">
             <PageHeader> Tables </PageHeader>
           </Col>
           {hasData ?
@@ -137,6 +174,11 @@ class App extends Component {
                 tables={this.props.tables}
                 getTableDataCallback={this.sendGetData}
                 fetchInProgress={dataGatheringPhaseInProgress}
+                showAdvanced={this.props.showAdvanced}
+                filterInfo={this.props.filterInfo}
+                activeJoinFilter={this.props.activeJoinFilter}
+                setActiveJoinFilter={this.setActiveJoinFilter}
+                setFilterInfo={this.setFilterInfo}
               />
             </Col>
             :

@@ -47,7 +47,8 @@ export function receiveMessage(payload) {
 
         case eventNames.SCHEMA_CB: {
           const schema = msgData.schema;
-          dispatch(handleSchemaCallback(schema));
+          const standardConnections = msgData.standardConnections;
+          dispatch(handleSchemaCallback(schema, standardConnections));
           break;
         }
 
@@ -79,6 +80,13 @@ export function receiveMessage(payload) {
           dispatch(handleAbortForAuth(errorMsg));
           break;
         }
+
+        case eventNames.REPORT_PROGRESS: {
+          const progressMsg = msgData.progressMsg;
+          dispatch(handleReportProgress(progressMsg));
+          break;
+        }
+
         default: {
           // The message was not for the simulator, ignore it.
           break;
@@ -132,7 +140,7 @@ export function handleSubmit() {
   };
 }
 
-export function handleSchemaCallback(schema) {
+export function handleSchemaCallback(schema, standardConnections) {
   return (dispatch, getState) => {
     // Validate schema, and populate store with new table objects
     // using the schema info
@@ -161,6 +169,7 @@ export function handleSchemaCallback(schema) {
     } else {
       toastr.error('Please see debug console for details.', 'WDC Validation Error');
     }
+    dispatch(simulatorActions.setStandardConnections(standardConnections));
   };
 }
 
@@ -218,6 +227,16 @@ export function handleAbortForAuth(msg) {
       console.log(`abortForAuth isn't supported in the ${currentPhase} phase`);
       /* eslint-enable no-console */
     }
+  };
+}
+
+export function handleReportProgress(progressMsg) {
+  return () => {
+    // The WDC has reported a progress message, display in toast
+    /* eslint-disable no-console */
+    console.log(progressMsg);
+    /* eslint-enable no-console */
+    toastr.info(progressMsg, 'The WDC reported a progress message:');
   };
 }
 

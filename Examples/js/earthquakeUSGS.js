@@ -16,13 +16,8 @@
             alias: "title",
             dataType: tableau.dataTypeEnum.string
         }, {
-            id: "lat",
-            alias: "latitude",
-            dataType: tableau.dataTypeEnum.float
-        }, {
-            id: "lon",
-            alias: "longitude",
-            dataType: tableau.dataTypeEnum.float
+            id: "location",
+            dataType: tableau.dataTypeEnum.geometry
         }];
 
         var tableSchema = {
@@ -36,7 +31,7 @@
 
     // Download the data
     myConnector.getData = function(table, doneCallback) {
-        $.getJSON("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson", function(resp) {
+        $.getJSON("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson", function(resp) {
             var feat = resp.features,
                 tableData = [];
 
@@ -46,8 +41,7 @@
                     "id": feat[i].id,
                     "mag": feat[i].properties.mag,
                     "title": feat[i].properties.title,
-                    "lon": feat[i].geometry.coordinates[0],
-                    "lat": feat[i].geometry.coordinates[1]
+                    "location": feat[i].geometry
                 });
             }
 
